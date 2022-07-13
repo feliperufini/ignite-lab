@@ -1,6 +1,37 @@
+import { gql, useMutation } from "@apollo/client";
+import { useState, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { Logo } from "../components/Logo";
 
+const CREATE_SUBSCRIBER_MUTATION = gql`
+  mutation CreateSubscriber ($name: String!, $email: String!) {
+    createSubscriber(data: {name: $name, email: $email}){
+      id
+    }
+  }
+`
+
 export function Subscribe() {
+  const navigate = useNavigate();
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+
+  const [createSubscriber, { loading }] = useMutation(CREATE_SUBSCRIBER_MUTATION);
+
+  async function handleSubscribe(event: FormEvent) {
+    event.preventDefault();
+
+    await createSubscriber({
+      variables: {
+        name,
+        email,
+      }
+    });
+
+    navigate('/event');
+  }
+
   return (
     <div className="min-h-screen bg-blur bg-cover bg-no-repeat flex flex-col items-center">
       <div className="w-full max-w-[1100px] flex items-center justify-between mt-20 mx-auto">
@@ -10,19 +41,37 @@ export function Subscribe() {
             Construindo uma <strong>aplicação completa</strong> do zero com <strong>React</strong>
           </h1>
           <p className="mt-4 text-gray-200 leading-relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet neque nec tempus cursus. Suspendisse dapibus nisi nec risus eleifend pellentesque. Mauris mauris ex, lacinia sed justo eget, ullamcorper aliquam elit. Suspendisse iaculis sollicitudin odio, sed dictum sapien venenatis in. Nulla hendrerit felis eget metus hendrerit, sit amet dapibus magna euismod. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus facilisis neque nulla, a rhoncus diam congue non. Vivamus ac ultricies felis.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet neque nec tempus cursus. Suspendisse dapibus nisi nec risus eleifend pellentesque. Mauris mauris ex, lacinia sed justo eget, ullamcorper aliquam elit. Suspendisse iaculis sollicitudin odio, sed dictum sapien venenatis in. Nulla hendrerit felis eget metus hendrerit.
           </p>
         </div>
-        <div className="p-8 bg-gray-700 border border-gray-500 rounded">
+        <div className="p-8 bg-slate-900 border border-slate-700 rounded">
           <strong className="text-2xl mb-6 block">
             Inscreva-se gratuitamente
           </strong>
-          <form action="" method="post">
-            
+          <form onSubmit={handleSubscribe} className="flex flex-col gap-2 w-full">
+            <input
+              className="bg-slate-700 rounded px-5 h-14"
+              type="text"
+              placeholder="Seu nome completo"
+              onChange={event => setName(event.target.value)}
+            />
+            <input
+              className="bg-slate-700 rounded px-5 h-14"
+              type="mail"
+              placeholder="Digite seu e-mail"
+              onChange={event => setEmail(event.target.value)}
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-4 bg-green-500 uppercase py-4 rounded font-bold text-sm hover:bg-green-700 transition-colors disabled:opacity-50"
+            >
+              Garantir minha vaga
+            </button>
           </form>
         </div>
       </div>
-      <img src="/src/assets/code.png" alt="" className="" />
+      <img src="/src/assets/code.png" alt="" className="w-full max-w-[900px] m-8" />
     </div>
   );
 }

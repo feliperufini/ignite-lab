@@ -1,6 +1,9 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 export const client = new ApolloClient({
-  uri: 'https://api-sa-east-1.graphcms.com/v2/cl4oevbl425zp01z23q4a8hou/master',
+  uri: import.meta.env.VITE_API_URL,
+  headers: {
+    'Authorization': `Barrer ${import.meta.env.VITE_API_ACCESS_TOKEN}`
+  },
   cache: new InMemoryCache()
 })
